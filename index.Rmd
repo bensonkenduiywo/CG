@@ -1,5 +1,5 @@
 ---
-title: "Data Science Specialist Position – Written Test"
+title: "Data Science"
 author: "Benson Kenduiywo"
 date: '2022-08-11'
 csl: "apa-6th-edition.csl"
@@ -25,8 +25,47 @@ opts_knit$set(global.par = TRUE)
 This exercise explores the how of different climate influences the intensity different types of conflicts. Regional data from [ACLED](https://acleddata.com/curated-data-files/#aggregated) is adopted. ACLED is an event-based data project designed for disaggregated conflict analysis and crisis mapping.
 
 
-Load the data
-```{r}
+Prepare environment and Load the data
 
+```{r d1}
+rm(list=ls(all=TRUE))
+root <- "/home/servir/RHEAS/data/conflict/"
+temp <- read.csv(paste0(root, "Africa_1997-2022_Aug05.csv"), stringsAsFactors =  FALSE)
+
+knitr::kable(head(temp, n=5), booktabs=TRUE) 
 ```
+
+Filter conflict events for Kenya only
+
+```{r d2}
+con <- subset(temp, COUNTRY=="Kenya")
+```
+
+## Visualization
+
+Next lets visualize conflicts type and fatalities.
+
+```{r v1}
+cause <- tapply(con$FATALITIES, con$EVENT_TYPE, sum, na.rm=TRUE)
+x <- sort(round(cause))
+par(mai=c(0.5,3,0.5,1)) #c(bottom, left, top, right)
+barplot(x, horiz=T, las=1)
+```
+
+Violence against civilians is the leading type of conflict. Let's visualize this event spatially.
+
+
+
+```{r}
+if (!"raster" %in% installed.packages()){
+  install.packages("raster", dependencies = T)
+}
+library(raster)
+ken <- getData("GADM", country="KEN", level=1)
+plot(ken)
+text(ken, toupper(ken$NAME_1),  cex=0.6)
+```
+
+
+
 

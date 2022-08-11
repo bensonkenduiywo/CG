@@ -13,7 +13,7 @@
 
 <meta name="date" content="2022-08-11" />
 
-<title>Data Science Specialist Position – Written Test</title>
+<title>Data Science</title>
 
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -391,8 +391,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Data Science Specialist Position – Written
-Test</h1>
+<h1 class="title toc-ignore">Data Science</h1>
 <h4 class="author">Benson Kenduiywo</h4>
 <h4 class="date">2022-08-11</h4>
 
@@ -406,7 +405,267 @@ intensity different types of conflicts. Regional data from <a
 href="https://acleddata.com/curated-data-files/#aggregated">ACLED</a> is
 adopted. ACLED is an event-based data project designed for disaggregated
 conflict analysis and crisis mapping.</p>
-<p>Load the data</p>
+<p>Prepare environment and Load the data</p>
+<pre class="r"><code>rm(list=ls(all=TRUE))
+root &lt;- &quot;/home/servir/RHEAS/data/conflict/&quot;
+temp &lt;- read.csv(paste0(root, &quot;Africa_1997-2022_Aug05.csv&quot;), stringsAsFactors =  FALSE)
+
+knitr::kable(head(temp, n=5), booktabs=TRUE) </code></pre>
+<table>
+<colgroup>
+<col width="0%" />
+<col width="2%" />
+<col width="2%" />
+<col width="2%" />
+<col width="0%" />
+<col width="2%" />
+<col width="4%" />
+<col width="2%" />
+<col width="4%" />
+<col width="2%" />
+<col width="1%" />
+<col width="3%" />
+<col width="2%" />
+<col width="1%" />
+<col width="2%" />
+<col width="2%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="2%" />
+<col width="1%" />
+<col width="1%" />
+<col width="2%" />
+<col width="2%" />
+<col width="2%" />
+<col width="38%" />
+<col width="1%" />
+<col width="1%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">ISO</th>
+<th align="left">EVENT_ID_CNTY</th>
+<th align="right">EVENT_ID_NO_CNTY</th>
+<th align="left">EVENT_DATE</th>
+<th align="right">YEAR</th>
+<th align="right">TIME_PRECISION</th>
+<th align="left">EVENT_TYPE</th>
+<th align="left">SUB_EVENT_TYPE</th>
+<th align="left">ACTOR1</th>
+<th align="left">ASSOC_ACTOR_1</th>
+<th align="right">INTER1</th>
+<th align="left">ACTOR2</th>
+<th align="left">ASSOC_ACTOR_2</th>
+<th align="right">INTER2</th>
+<th align="right">INTERACTION</th>
+<th align="left">REGION</th>
+<th align="left">COUNTRY</th>
+<th align="left">ADMIN1</th>
+<th align="left">ADMIN2</th>
+<th align="left">ADMIN3</th>
+<th align="left">LOCATION</th>
+<th align="right">LATITUDE</th>
+<th align="right">LONGITUDE</th>
+<th align="right">GEO_PRECISION</th>
+<th align="left">SOURCE</th>
+<th align="left">SOURCE_SCALE</th>
+<th align="left">NOTES</th>
+<th align="right">FATALITIES</th>
+<th align="right">TIMESTAMP</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">12</td>
+<td align="left">ALG1</td>
+<td align="right">1</td>
+<td align="left">01-January-1997</td>
+<td align="right">1997</td>
+<td align="right">1</td>
+<td align="left">Violence against civilians</td>
+<td align="left">Attack</td>
+<td align="left">GIA: Armed Islamic Group</td>
+<td align="left"></td>
+<td align="right">2</td>
+<td align="left">Civilians (Algeria)</td>
+<td align="left"></td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="left">Northern Africa</td>
+<td align="left">Algeria</td>
+<td align="left">Tipaza</td>
+<td align="left">Douaouda</td>
+<td align="left"></td>
+<td align="left">Douaouda</td>
+<td align="right">36.672</td>
+<td align="right">2.789</td>
+<td align="right">1</td>
+<td align="left">Algeria Watch</td>
+<td align="left">Other</td>
+<td align="left">5 January: Beheading of 5 citizens in Douaouda
+(Tipaza).</td>
+<td align="right">5</td>
+<td align="right">1582579226</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">ALG2</td>
+<td align="right">2</td>
+<td align="left">02-January-1997</td>
+<td align="right">1997</td>
+<td align="right">1</td>
+<td align="left">Violence against civilians</td>
+<td align="left">Attack</td>
+<td align="left">GIA: Armed Islamic Group</td>
+<td align="left"></td>
+<td align="right">2</td>
+<td align="left">Civilians (Algeria)</td>
+<td align="left"></td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="left">Northern Africa</td>
+<td align="left">Algeria</td>
+<td align="left">Relizane</td>
+<td align="left">Mazouna</td>
+<td align="left"></td>
+<td align="left">Hassasna</td>
+<td align="right">36.133</td>
+<td align="right">0.883</td>
+<td align="right">1</td>
+<td align="left">Algeria Watch</td>
+<td align="left">Other</td>
+<td align="left">Two citizens were beheaded in Hassasna.</td>
+<td align="right">2</td>
+<td align="right">1582579226</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="left">ALG3</td>
+<td align="right">3</td>
+<td align="left">03-January-1997</td>
+<td align="right">1997</td>
+<td align="right">1</td>
+<td align="left">Violence against civilians</td>
+<td align="left">Attack</td>
+<td align="left">GIA: Armed Islamic Group</td>
+<td align="left"></td>
+<td align="right">2</td>
+<td align="left">Civilians (Algeria)</td>
+<td align="left"></td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="left">Northern Africa</td>
+<td align="left">Algeria</td>
+<td align="left">Saida</td>
+<td align="left">Youb</td>
+<td align="left"></td>
+<td align="left">Hassi El Abed</td>
+<td align="right">34.966</td>
+<td align="right">-0.290</td>
+<td align="right">1</td>
+<td align="left">Algeria Watch</td>
+<td align="left">Other</td>
+<td align="left">Two citizens were killed in a raid on the village of
+Hassi El Abd. Several televisions were destroyed and the school of the
+village burned.</td>
+<td align="right">2</td>
+<td align="right">1582579226</td>
+</tr>
+<tr class="even">
+<td align="right">12</td>
+<td align="left">ALG4</td>
+<td align="right">4</td>
+<td align="left">04-January-1997</td>
+<td align="right">1997</td>
+<td align="right">1</td>
+<td align="left">Violence against civilians</td>
+<td align="left">Attack</td>
+<td align="left">GIA: Armed Islamic Group</td>
+<td align="left"></td>
+<td align="right">2</td>
+<td align="left">Civilians (Algeria)</td>
+<td align="left"></td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="left">Northern Africa</td>
+<td align="left">Algeria</td>
+<td align="left">Blida</td>
+<td align="left">Blida</td>
+<td align="left"></td>
+<td align="left">Blida</td>
+<td align="right">36.469</td>
+<td align="right">2.829</td>
+<td align="right">1</td>
+<td align="left">Algeria Watch</td>
+<td align="left">Other</td>
+<td align="left">4 January: 16 citizens were murdered in the village of
+Benachour (Blida) by masked men a few hundred meters away from a
+military camp. It is of note that the citizens of this village had
+refused to set up armed militias.</td>
+<td align="right">16</td>
+<td align="right">1582579226</td>
+</tr>
+<tr class="odd">
+<td align="right">12</td>
+<td align="left">ALG5</td>
+<td align="right">5</td>
+<td align="left">05-January-1997</td>
+<td align="right">1997</td>
+<td align="right">1</td>
+<td align="left">Violence against civilians</td>
+<td align="left">Attack</td>
+<td align="left">GIA: Armed Islamic Group</td>
+<td align="left"></td>
+<td align="right">2</td>
+<td align="left">Civilians (Algeria)</td>
+<td align="left"></td>
+<td align="right">7</td>
+<td align="right">27</td>
+<td align="left">Northern Africa</td>
+<td align="left">Algeria</td>
+<td align="left">Tipaza</td>
+<td align="left">Douaouda</td>
+<td align="left"></td>
+<td align="left">Douaouda</td>
+<td align="right">36.672</td>
+<td align="right">2.789</td>
+<td align="right">1</td>
+<td align="left">Algeria Watch</td>
+<td align="left">Other</td>
+<td align="left">5 January: Killing of 18 citizens in the Oliviers
+district of Douaouda (Tipaza). Among the victims are 3 children and 6
+women. This region had refused to organise armed militias.</td>
+<td align="right">18</td>
+<td align="right">1582579226</td>
+</tr>
+</tbody>
+</table>
+<p>Filter conflict events for Kenya only</p>
+<pre class="r"><code>con &lt;- subset(temp, COUNTRY==&quot;Kenya&quot;)</code></pre>
+</div>
+<div id="visualization" class="section level2">
+<h2>Visualization</h2>
+<p>Next lets visualize conflicts type and fatalities.</p>
+<pre class="r"><code>cause &lt;- tapply(con$FATALITIES, con$EVENT_TYPE, sum, na.rm=TRUE)
+x &lt;- sort(round(cause))
+par(mai=c(0.5,3,0.5,1)) #c(bottom, left, top, right)
+barplot(x, horiz=T, las=1)</code></pre>
+<p><img src="index_files/figure-html/v1-1.png" width="672" /></p>
+<p>Violence against civilians is the leading type of conflict. Let’s
+visualize this event spatially.</p>
+<pre class="r"><code>if (!&quot;raster&quot; %in% installed.packages()){
+  install.packages(&quot;raster&quot;, dependencies = T)
+}
+library(raster)</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre class="r"><code>ken &lt;- getData(&quot;GADM&quot;, country=&quot;KEN&quot;, level=1)</code></pre>
+<pre><code>## Warning in getData(&quot;GADM&quot;, country = &quot;KEN&quot;, level = 1): getData will be removed in a future version of raster
+## . You can use access these data, and more, with functions from the geodata package instead</code></pre>
+<pre class="r"><code>plot(ken)
+text(ken, toupper(ken$NAME_1),  cex=0.6)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
 </div>
 
 <!DOCTYPE html>
