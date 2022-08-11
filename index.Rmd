@@ -1,0 +1,32 @@
+---
+title: "Data Science Specialist Position – Written Test"
+author: "Benson Kenduiywo"
+date: '2022-08-11'
+csl: "apa-6th-edition.csl"
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, global_options, tidy = TRUE, echo=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60))
+opts_knit$set(global.par = TRUE)
+```
+
+## Introduction
+
+This exercise explores the how of different climate influences the intensity different types of conflicts. Regional data from [ACLED](https://acleddata.com/curated-data-files/#aggregated) is adopted. ACLED is an event-based data project designed for disaggregated conflict analysis and crisis mapping.
+
+
+Load the data
+```{r}
+
+```
+
