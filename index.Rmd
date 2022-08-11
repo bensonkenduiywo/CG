@@ -52,9 +52,66 @@ par(mai=c(0.5,3,0.5,1)) #c(bottom, left, top, right)
 barplot(x, horiz=T, las=1)
 ```
 
-Violence against civilians is the leading type of conflict. Let's visualize this event spatially.
+Violence against civilians is the leading type of conflict. Let's visualize this event spatially. To do that the dataframe should be converted to a `SpatialPointsDataFrame`.
 
+```{r v2}
+df1 <- con
+library(sp)
+coordinates(df1) <- ~LONGITUDE+LATITUDE
+proj4string(df1) <- CRS("+proj=longlat +datum=WGS84")
 
+```
+
+Visualize the spatial object.
+
+```{r v3, echo=F , message=F}
+library(tmap)
+library(mapview)
+tmap_mode("view")
+map_a <- tm_shape(df1, name="Violence against civilians") +
+  tm_bubbles(size="FATALITIES", col = "EVENT_TYPE") +
+  tm_format("World")
+map_a
+
+```
+
+Summary of conflicts distribution:
+
+1) Battles are dominant in then NW, 
+2) Many explosions are reported in the Nairobi county.
+3) Riots are dominant in the Nairobi, Kisumu, Machakos and Mombasa.
+4) The other forms seem wide spread.
+
+Let's explore more violence against civilians.
+
+```{r v4, echo=F , message=F}
+df1 <- subset(df1, EVENT_TYPE=="Violence against civilians")
+tmap_mode("view")
+map_b <- tm_shape(df1, name="Violence against civilians") +
+  tm_bubbles(size="FATALITIES", col = "SUB_EVENT_TYPE") +
+  tm_format("World")
+map_b
+
+```
+
+Violence against civilians in the form of attack are dominant and widespread across the country. Many cases are reported in Turkana and towards the Eastern side of the country.
+When do these form of violence happen/
+
+```{r v5}
+library(reshape2)
+temp <- subset(df1@data, select = c(YEAR, FATALITIES, SUB_EVENT_TYPE))
+temp <- aggregate(FATALITIES~SUB_EVENT_TYPE+YEAR, temp, sum, na.rm=T)
+temp <- reshape(temp, direction="wide", idvar="SUB_EVENT_TYPE", timevar="YEAR")
+colnames(temp) <- gsub("FATALITIES.", "", colnames(temp))
+temp <- as.matrix(temp)
+rownames(temp) <- temp[,1]
+cola <- c("red", "green", "blue")
+par(mfrow=c(1, 1), mar=c(5, 5, 4, 5))
+barplot(temp[,-1], legend =  rownames(temp), las=2, args.leg=list(x = "topright", bty = "n", inset=c(-0.2, 0), cex=0.75), col=cola, ylab="Fatalities")
+
+```
+
+From the figure the years 1997, 1998, 2000, 2007, 2008, 2013, and, 2017 had the highest attacks with Kenya civilians being the most vulnerable. 
 
 ```{r}
 if (!"raster" %in% installed.packages()){
