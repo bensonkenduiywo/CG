@@ -12,14 +12,10 @@ navbar:
     - text: "More"
       icon: fa-gear
       menu:
-        - text: "Data storage schema"
-          href: lesson1.html
-        - text: "Image Fusion"
-          href: fusion.html   
-        - text: "Crop mapping"
-          href: mapping.html  
-        - text: "Yield prediction"
-          href: modis.html 
+        - text: "Climate metrics"
+          href: modis.html
+        - text: "Conflict and climate"
+          href: metrics.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:bensonkemboi@gmail.com

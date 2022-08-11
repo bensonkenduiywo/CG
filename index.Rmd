@@ -95,7 +95,8 @@ map_b <- tm_shape(df1, name="Violence against civilians") +
   tm_bubbles(size="FATALITIES", col = "SUB_EVENT_TYPE") +
   tm_format("World")
 map_b
-
+#Save for later use
+saveRDS(df1, "civilianViolence.rds")
 ```
 
 Violence against civilians in the form of attack are dominant and widespread across the country. Many cases are reported in Turkana and towards the Eastern side of the country.

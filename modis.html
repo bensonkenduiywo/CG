@@ -11,6 +11,625 @@
 
 
 
+<title>modis.knit</title>
+
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Geospatial Data Science in R</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">
+    <span class="fa fa-home"></span>
+     
+    Home
+  </a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-gear"></span>
+     
+    More
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="modis.html">Climate metrics</a>
+    </li>
+    <li>
+      <a href="metrics.html">Conflict and climate</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="mailto:bensonkemboi@gmail.com">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/bensonkenduiywo">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://twitter.com/bensonkenduiywo">
+    <span class="fab fa-twitter fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.linkedin.com/in/benson-kenduiywo-1a218137">
+    <span class="fab fa-linkedin fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+
+</div>
+
+
+<div id="climate-earth-observation-variables" class="section level2">
+<h2>Climate Earth Observation variables</h2>
+<div id="modis-gross-primary-productivity" class="section level3">
+<h3>MODIS Gross Primary Productivity</h3>
+<p>Lets use MODIS Gross Primary Productivity (GPP) and evaluate the
+relationship between violence against civilians and food productivity.
+GPP is a product from MODIS that was acquired from MOD17 data series
+products generated from Terra satellite. It is based on the
+radiation-use efficiency concept and can potentially be used to quantify
+generation of new biomass in vegetation and a proxy to food production
+<span class="citation">(Kenduiywo, Ghosh, Hijmans, &amp; Ndungu,
+2020)</span>.</p>
+<p>GPP 8-day composite is available at 500 m spatial resolution period
+with product names <strong>MOD17A2H</strong> and
+<strong>MYD17A2H</strong> in Terra and Aqua respectively <span
+class="citation">(NASA, 2021)</span>. Let’s download the product which
+available from 2000.</p>
+<pre class="r"><code>if (!&quot;luna&quot; %in% installed.packages()){
+  remotes::install_github(&quot;rspatial/luna&quot;)
+}
+library(luna)
+prod &lt;- getProducts(&quot;^MOD17A2|^MYD17A2&quot;)
+knitr::kable(table(head(prod, n=3)), align = &#39;l&#39;)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">provider</th>
+<th align="left">concept_id</th>
+<th align="left">short_name</th>
+<th align="left">version</th>
+<th align="left">Freq</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500873-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">005</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500875-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">005</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C1218471156-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">005</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500873-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">005</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500875-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">005</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C1218471156-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">005</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500873-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">V001</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500875-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">V001</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C1218471156-LPDAAC_ECS</td>
+<td align="left">MOD17A2</td>
+<td align="left">V001</td>
+<td align="left">1</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500873-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">V001</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C117500875-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">V001</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">LPDAAC_ECS</td>
+<td align="left">C1218471156-LPDAAC_ECS</td>
+<td align="left">MYD17A2</td>
+<td align="left">V001</td>
+<td align="left">0</td>
+</tr>
+</tbody>
+</table>
+<p>We are almost ready to download the data. Let’s get Kenya’s country
+boundary and start data downloads.</p>
+<pre class="r"><code>if (!&quot;raster&quot; %in% installed.packages()){
+  install.packages(&quot;raster&quot;, dependencies = T)
+}
+library(raster)
+aoi &lt;- getData(&quot;GADM&quot;, country=&quot;KEN&quot;, level=0)
+plot(aoi)</code></pre>
+<p><img src="modis_files/figure-html/m2-1.png" width="672" /></p>
+<p>Define data parameters: product name, start and end date, and area of
+interest. We define date as follows:</p>
+<pre class="r"><code>start &lt;- &quot;2001-01-01&quot;
+end &lt;- &quot;2001-02-12&quot;</code></pre>
+<p>Thereafter, extract existing data files, this Terra GPP products.</p>
+<pre class="r"><code>product &lt;- &quot;MOD17A2H&quot;
+mf &lt;- luna::getModis(product, start, end, aoi=aoi, download = FALSE)
+length(mf)</code></pre>
+<pre><code>## [1] 28</code></pre>
+<p>MODIS data can be download from <a
+href="https://urs.earthdata.nasa.gov/users">EarthData</a>. This requires
+specification of a storage directory, a user’s name and password. Here,
+the password is saved in a directory that we will read. For the sake of
+time it takes to donwload the data a demo is only done for 5 days data.
+Later Earth Engine will be used to process the data and code link shared
+for purposes of time constraints.</p>
+<pre class="r"><code>pass &lt;- readRDS(&quot;earthdata.rds&quot;)
+modis_path &lt;- &quot;/home/bkenduiywo/R/raw/&quot; 
+dir.create(modis_path)</code></pre>
+<pre><code>## Warning in dir.create(modis_path): &#39;/home/bkenduiywo/R/raw&#39; already exists</code></pre>
+<pre class="r"><code>mstart &lt;- &quot;2001-01-01&quot;
+mend &lt;- &quot;2001-01-05&quot;
+luna::getModis(product, start, end, aoi=aoi, download=TRUE,
+                     path=modis_path, username=pass$username,
+                     password=pass$password)</code></pre>
+<pre><code>##  [1] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2000361.h22v09.006.2015141154842.hdf&quot;
+##  [2] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2000361.h21v09.006.2015141182536.hdf&quot;
+##  [3] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2000361.h22v08.006.2015141181629.hdf&quot;
+##  [4] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2000361.h21v08.006.2015141191018.hdf&quot;
+##  [5] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001001.h22v09.006.2015141170304.hdf&quot;
+##  [6] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001001.h22v08.006.2015141195519.hdf&quot;
+##  [7] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001001.h21v09.006.2015141202001.hdf&quot;
+##  [8] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001001.h21v08.006.2015141212155.hdf&quot;
+##  [9] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001009.h22v09.006.2015141182447.hdf&quot;
+## [10] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001009.h22v08.006.2015141223236.hdf&quot;
+## [11] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001009.h21v09.006.2015141225226.hdf&quot;
+## [12] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001009.h21v08.006.2015141232158.hdf&quot;
+## [13] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001017.h22v09.006.2015141195502.hdf&quot;
+## [14] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001017.h22v08.006.2015142000254.hdf&quot;
+## [15] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001017.h21v09.006.2015142002329.hdf&quot;
+## [16] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001017.h21v08.006.2015142005341.hdf&quot;
+## [17] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001025.h22v09.006.2015141223324.hdf&quot;
+## [18] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001025.h22v08.006.2015142013343.hdf&quot;
+## [19] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001025.h21v09.006.2015142015354.hdf&quot;
+## [20] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001025.h21v08.006.2015142022436.hdf&quot;
+## [21] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001033.h22v09.006.2015142000220.hdf&quot;
+## [22] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001033.h22v08.006.2015142032648.hdf&quot;
+## [23] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001033.h21v09.006.2015142041223.hdf&quot;
+## [24] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001033.h21v08.006.2015142052633.hdf&quot;
+## [25] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001041.h22v09.006.2015142013327.hdf&quot;
+## [26] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001041.h22v08.006.2015142062100.hdf&quot;
+## [27] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001041.h21v09.006.2015142064808.hdf&quot;
+## [28] &quot;/home/bkenduiywo/R/raw//MOD17A2H.A2001041.h21v08.006.2015142080324.hdf&quot;</code></pre>
+<p>Further, processing steps are available <a
+href="https://bensonkenduiywo.github.io/dip/MODISprocessing.html">here</a>.
+The steps are covered on Earth Engine to save on time those steps were
+done using as shown <a
+href="https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf">here</a>.</p>
+<p><a href="metrics.html"><strong>NEXT PAGE</strong></a>.</p>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent"
+line-spacing="2">
+<div id="ref-Kenduiywo_ISPRS_2020" class="csl-entry">
+Kenduiywo, B. K., Ghosh, A., Hijmans, R., &amp; Ndungu, L. (2020). MAIZE
+YIELD ESTIMATION IN KENYA USING MODIS. <em>ISPRS Annals of the
+Photogrammetry, Remote Sensing and Spatial Information Sciences</em>,
+<em>V-3-2020</em>, 477–482. <a
+href="https://doi.org/10.5194/isprs-annals-V-3-2020-477-2020">https://doi.org/10.5194/isprs-annals-V-3-2020-477-2020</a>
+</div>
+<div id="ref-12_NASA_2021" class="csl-entry">
+NASA. (2021). <em><span>Data Products</span></em>. Retrieved from <a
+href="https://modis.gsfc.nasa.gov/data/dataprod/index.php">https://modis.gsfc.nasa.gov/data/dataprod/index.php</a>
+</div>
+</div>
+</div>
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
 <title>footer.knit</title>
 
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
@@ -1488,6 +2107,84 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

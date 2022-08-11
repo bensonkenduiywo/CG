@@ -1,0 +1,85 @@
+---
+bibliography: references.bib
+csl: "apa-6th-edition.csl"
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Climate Earth Observation variables
+
+### MODIS Gross Primary Productivity
+
+Lets use MODIS Gross Primary Productivity (GPP) and evaluate the relationship between violence against civilians and food productivity. GPP is a product from MODIS that was acquired from MOD17 data series products generated from Terra satellite. It is based on the radiation-use efficiency concept and can potentially be used to quantify generation of new biomass in vegetation and a proxy to food production [@Kenduiywo_ISPRS_2020].
+
+
+GPP 8-day composite is available at 500 m spatial resolution period with product names **MOD17A2H** and **MYD17A2H** in Terra and Aqua respectively [@12_NASA_2021]. Let's download the product which available from 2000. 
+
+```{r m1}
+if (!"luna" %in% installed.packages()){
+  remotes::install_github("rspatial/luna")
+}
+library(luna)
+prod <- getProducts("^MOD17A2|^MYD17A2")
+knitr::kable(table(head(prod, n=3)), align = 'l')
+
+```
+
+We are almost ready to download the data. Let's get Kenya's country boundary and start data downloads. 
+
+```{r m2, message=F, warning=F}
+if (!"raster" %in% installed.packages()){
+  install.packages("raster", dependencies = T)
+}
+library(raster)
+aoi <- getData("GADM", country="KEN", level=0)
+plot(aoi)
+
+```
+
+Define data parameters: product name, start and end date, and area of interest. We define date as follows: 
+
+```{r m3}
+start <- "2001-01-01"
+end <- "2001-02-12"
+
+```
+
+Thereafter, extract existing data files, this Terra GPP products.
+
+```{r m4}
+product <- "MOD17A2H"
+mf <- luna::getModis(product, start, end, aoi=aoi, download = FALSE)
+length(mf)
+```
+
+MODIS data can be download from [EarthData](https://urs.earthdata.nasa.gov/users). This requires specification of a storage directory, a user's name and password. Here, the password is saved in a directory that we will read. For the sake of time it takes to donwload the data a demo is only done for 5 days data. Later Earth Engine will be used to process the data and code link shared for purposes of time constraints.
+
+```{r m5}
+pass <- readRDS("earthdata.rds")
+modis_path <- "/home/bkenduiywo/R/raw/" 
+dir.create(modis_path)
+mstart <- "2001-01-01"
+mend <- "2001-01-05"
+luna::getModis(product, start, end, aoi=aoi, download=TRUE,
+                     path=modis_path, username=pass$username,
+                     password=pass$password)
+
+```
+
+Further, processing steps are available [here](https://bensonkenduiywo.github.io/dip/MODISprocessing.html). The steps are covered on Earth Engine to save on time those steps were done using as shown [here](https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf).
+
+[**NEXT PAGE**](metrics.html).
+
+## References
+

@@ -1,0 +1,100 @@
+---
+bibliography: references.bib
+csl: "apa-6th-edition.csl"
+output: 
+   html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, global_options, tidy = TRUE, echo=FALSE}
+library(knitr)
+opts_chunk$set(tidy.opts=list(width.cutoff=60))
+opts_knit$set(global.par = TRUE)
+```
+
+## Climate metrics
+
+Load necessary packages and define directories.
+
+```{r refdata, echo=FALSE, warning=FALSE, message=FALSE}
+rm(list = ls(all=TRUE))
+unlink(".RData")
+library(dplyr)
+library(reshape2)
+root <- "/home/servir/RHEAS/data/conflict/"
+metric <- paste0(root, "metric")
+ref <- paste0(root, "ref/")
+
+```
+
+
+### Get metrics
+
+Load Gross Primary Productivity (GPP) MODIS (2000--2022) and ERA5 (1997--2020) climate metrics computed in [Earth Engine]([here](https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf)) and convert to long format.
+
+```{r modis, echo=FALSE, warning=FALSE, message=FALSE}
+wide2long <- function(df, variable){
+  df <- subset(df, select =-.geo)
+  df <- subset(df, NAME_1 != "Counties")
+  melt(df[, -1], variable.name = "date", 
+          value.name = variable, id.vars = "NAME_1")
+}
+
+#1.0 GPP
+temp <- list.files(metric, pattern=glob2rx("*gpp*"), full.names = T)
+gpp <-  read.csv(temp, stringsAsFactors =  FALSE)
+gpp <-  wide2long(gpp, "gpp")
+
+#2.0 air_temp
+temp <- list.files(metric, pattern=glob2rx("*temp*"), full.names = T)
+tmp <-  read.csv(temp, stringsAsFactors =  FALSE)
+
+tmp <-  wide2long(tmp, "temp")
+
+#3.0 total daily precipitation
+temp <- list.files(metric, pattern=glob2rx("*precip*"), full.names = T)
+prec <-  read.csv(temp, stringsAsFactors =  FALSE)
+
+prec <-  wide2long(prec, "precip")
+
+```
+
+Format the date variable by removing unnecessary characters.
+
+```{r y1, echo=FALSE, warning=FALSE, message=FALSE}
+formatDate <- function(m, weather=F){
+  if(weather){
+    m$date <- gsub("X","", m$date)
+    #m$date <- gsub("_nd","", m$date)
+    m$date <- substr(m$date,1,8)
+    m$date <- as.Date(as.character(m$date), format = "%Y%m%d")
+    m[1,]
+    colnames(m)[1] <- "County"
+    
+  }else{
+    m$date <- gsub("X","", m$date)
+    #m$date <- gsub("_nd","", m$date)
+    m$date <- substr(m$date,1,10)
+    m$date <- as.Date(as.character(m$date), format = "%Y_%m_%d")
+    m[1,]
+    colnames(m)[1] <- "County"
+  }
+  
+  return(m)
+}
+
+gpp <- formatDate(gpp)
+knitr::kable(head(gpp, n=2))
+tmp <- formatDate(tmp, weather = T)
+knitr::kable(head(tmp, n=2))
+prec <- formatDate(prec, weather = T)
+knitr::kable(head(prec, n=2))
+```
+
+
