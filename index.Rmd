@@ -43,6 +43,8 @@ con <- subset(temp, COUNTRY=="Kenya")
 
 ## Visualization
 
+### Conflict types
+
 Next lets visualize conflicts type and fatalities.
 
 ```{r v1}
@@ -51,6 +53,8 @@ x <- sort(round(cause))
 par(mai=c(0.5,3,0.5,1)) #c(bottom, left, top, right)
 barplot(x, horiz=T, las=1)
 ```
+
+### Spatial distribution
 
 Violence against civilians is the leading type of conflict. Let's visualize this event spatially. To do that the dataframe should be converted to a `SpatialPointsDataFrame`.
 
@@ -95,7 +99,10 @@ map_b
 ```
 
 Violence against civilians in the form of attack are dominant and widespread across the country. Many cases are reported in Turkana and towards the Eastern side of the country.
-When do these form of violence happen/
+
+### Temporal distribution
+
+When do these form of violence happen?
 
 ```{r v5}
 library(reshape2)
@@ -113,16 +120,9 @@ barplot(temp[,-1], legend =  rownames(temp), las=2, args.leg=list(x = "topright"
 
 From the figure the years 1997, 1998, 2000, 2007, 2008, 2013, and, 2017 had the highest attacks with Kenya civilians being the most vulnerable. 
 
-```{r}
-if (!"raster" %in% installed.packages()){
-  install.packages("raster", dependencies = T)
-}
-library(raster)
-ken <- getData("GADM", country="KEN", level=1)
-plot(ken)
-text(ken, toupper(ken$NAME_1),  cex=0.6)
-```
+In the next section we integrate food production indices to relate evaluate any relationship between food production and conflicts against civilians.
 
+[**NEXT PAGE**](modis.html).
 
 
 
