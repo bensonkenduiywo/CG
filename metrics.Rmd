@@ -219,9 +219,104 @@ grid.arrange(p1, p2, p3, ncol = 2)
 ```
 
 
-Seems like precipitation is a good indicator of conflicts. For instance, conflicts are high when precipitation is low..
+Seems like precipitation is a good indicator of conflicts. For instance, conflicts are high when precipitation is low.
+
+## Vulnerable areas
+
+We can conduct spatial regression to evaluate vulnerable areas. For this Geographically weighted regression (GWR) is adopted. GWR is an exploratory technique mainly intended to indicate where non-stationarity is taking place on the map, that is where locally weighted regression coefficients move away from their global values. Its basis is the concern that the fitted coefficient values of a global model, fitted to all the data, may not represent detailed local variations in the data adequately - in this it follows other local regression implementations. It differs, however, in not looking for local variation in ‘data’ space, but by moving a weighted window over the data, estimating one set of coefficient values at every chosen ‘fit’ point. The fit points are very often the points at which observations were made, but do not have to be. If the local coefficients vary in space, it can be taken as an indication of non-stationarity.
+
+```{r gwr1}
+library(raster)
+ken <- getData("GADM", country="KEN", level=1)
+ken$NAME_1 <- toupper(ken$NAME_1)
+names(ken)[4] <- "County"
+ken <- ken[,"County"]
+```
 
 
-## References
+Merge County boundaries with `data.frame` with Climate metrics and conflict information.
+
+```{r gwr2, warning=F, message=F}
+#ken <- merge(ken, dff, by="County",  duplicateGeoms = T)
+df <- aggregate(.~County, data = dff[,-2], mean, na.rm=T)
+ken <- merge(ken, df, by="County")
+
+sp.na.omit <- function(x, margin=1) {
+  if (!inherits(x, "SpatialPointsDataFrame") & !inherits(x, "SpatialPolygonsDataFrame")) 
+    stop("MUST BE sp SpatialPointsDataFrame OR SpatialPolygonsDataFrame CLASS OBJECT") 
+  na.index <- unique(as.data.frame(which(is.na(x@data),arr.ind=TRUE))[,margin])
+    if(margin == 1) {  
+      cat("DELETING ROWS: ", na.index, "\n") 
+        return( x[-na.index,]  ) 
+    }
+    if(margin == 2) {  
+      cat("DELETING COLUMNS: ", na.index, "\n") 
+        return( x[,-na.index]  ) 
+    }
+ }
+#shapefile(ken, "ken_conflicts.shp", overwrite=TRUE)
+ken <- sp.na.omit(ken)
+```
+
+
+### GWR
+
+Prior to running the GWR model we need to calculate a kernel bandwidth. This will determine now the GWR subsets the data when its test multiple models across space.
+
+```{r gwr3, message=F, warning=F}
+if (!"spgwr" %in% installed.packages()){
+  install.packages("spgwr", dependencies = T)
+}
+library(spgwr)
+GWRbandwidth <- gwr.sel(FATALITIES ~ precip, data=ken, adapt=T)
+```
+
+
+Run GWR model and view the results.
+
+```{r gwr4}
+gwr.model = gwr(FATALITIES ~ precip, data=ken, adapt=GWRbandwidth, hatmatrix=TRUE, se.fit=TRUE) 
+gwr.model
+```
+
+This model has a Quasi-global R-squared value of 0.73 . So 73% of the variance can be explained by the model. This indicates a high in-sample prediction accuracy.
+
+We will then bind the outputs to our `ken` polygon so we can map them.
+
+```{r gwr5}
+results <-as.data.frame(gwr.model$SDF)
+names(results)
+gwr.map <- cbind(ken, as.matrix(results))
+```
+
+
+Map the local R2.
+
+```{r gwr6}
+#qtm(gwr.map, fill = "localR2")
+library(tmap)
+tm_shape(gwr.map) + tm_fill("localR2", n = 5, style = "quantile")  + tm_layout(frame = FALSE, legend.text.size = 0.5, legend.title.size = 0.6)
+```
+
+
+Display fatalities and precip
+
+
+```{r gwr7}
+map1=tm_shape(gwr.map) + tm_fill("FATALITIES")  + tm_layout(frame = FALSE, legend.text.size = 0.8, legend.title.size = 0.8)+
+  tm_text("County", size = 0.6, remove.overlap = T)+
+  tm_format("World")
+map2=tm_shape(gwr.map) + tm_fill("precip")  + tm_layout(frame = FALSE, legend.text.size = 0.8, legend.title.size = 0.8)+
+  tm_text("County", size = 0.6, remove.overlap = T)+
+  tm_format("World")
+map1
+map2
+
+```
+
+
+It can be noted that Turkana, Garissa, and Mandera the most vulnerable counties to civilian violence. This can be linked to adverse climate effects as depicted by low precipitation. The model confidence in this areas is also moderate based on Local R2.
+
+
 
 
