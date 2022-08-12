@@ -62,6 +62,28 @@ if (window.hljs) {
 
 
 
+<style type="text/css">
+/* for pandoc --citeproc since 2.11 */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -390,12 +412,15 @@ div.tocify {
 <div id="climate-metrics" class="section level2">
 <h2>Climate metrics</h2>
 <p>Load necessary packages and define directories.</p>
-<div id="get-metrics" class="section level3">
-<h3>Get metrics</h3>
+<div id="spatial-metrics" class="section level3">
+<h3>Spatial metrics</h3>
 <p>Load Gross Primary Productivity (GPP) MODIS (2000–2022) and ERA5
 (1997–2020) climate metrics computed in <a
 href="%5Bhere%5D(https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf)">Earth
-Engine</a> and convert to long format.</p>
+Engine</a> and convert to long format. These metrics have been spatially
+aggregated to county boundaries as depicted by Figure 4 in <span
+class="citation">(Kenduiywo, Ghosh, Hijmans, &amp; Ndungu,
+2020)</span>.</p>
 <p>Format the date variable by removing unnecessary characters.</p>
 <table>
 <thead>
@@ -460,6 +485,112 @@ Engine</a> and convert to long format.</p>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div id="spatial-temporal-metrics" class="section level2">
+<h2>Spatial-temporal metrics</h2>
+<p>Temporally aggregate the spatial metrics per year to obtain
+<em>spatial-temporal climate metrics</em>. Event of conflicts from
+violence against civilians will also be aggregated per year and
+county.</p>
+<pre class="r"><code>gpp$date &lt;- format(as.Date(gpp$date, format=&quot;%d/%m/%Y&quot;),&quot;%Y&quot;)
+gpp &lt;- aggregate(.~County+date, data=gpp, mean, na.rm=T)
+tmp$date &lt;- format(as.Date(tmp$date, format=&quot;%d/%m/%Y&quot;),&quot;%Y&quot;)
+tmp &lt;- aggregate(.~County+date, data=tmp, mean, na.rm=T)
+prec$date &lt;- format(as.Date(prec$date, format=&quot;%d/%m/%Y&quot;),&quot;%Y&quot;)
+prec &lt;- aggregate(.~County+date, data=prec, mean, na.rm=T)
+
+con &lt;- readRDS(&quot;civilianViolence.rds&quot;)
+con &lt;- subset(con@data, select= c(ADMIN1, FATALITIES, YEAR))
+names(con)[1] &lt;- &quot;County&quot;
+names(con)[3] &lt;- &quot;date&quot;
+con &lt;- aggregate(.~County+date, data=con, sum, na.rm=T)</code></pre>
+<p>Let’s make some plots and evaluate trends. First merge each jmetric
+with conflict data. To do so check for county naming consistencies.</p>
+<pre class="r"><code>con$County &lt;- toupper(con$County)
+gpp$County &lt;- toupper(gpp$County)
+tmp$County &lt;- toupper(tmp$County)
+prec$County &lt;- toupper(prec$County)
+c &lt;- sort(unique(con$County))
+c[!c %in% sort(unique(gpp$County))]</code></pre>
+<pre><code>## [1] &quot;ELGEYO MARAKWET&quot; &quot;MURANGA&quot;</code></pre>
+<pre class="r"><code>c[!c %in% sort(unique(tmp$County))]</code></pre>
+<pre><code>## [1] &quot;ELGEYO MARAKWET&quot; &quot;MURANGA&quot;</code></pre>
+<pre class="r"><code>c[!c %in% sort(unique(prec$County))]</code></pre>
+<pre><code>## [1] &quot;ELGEYO MARAKWET&quot; &quot;MURANGA&quot;</code></pre>
+<p>Edit the inconsistencies on the identified counties.</p>
+<pre class="r"><code>con$County[con$County == &quot;MURANGA&quot;] &lt;- &quot;MURANG&#39;A&quot;
+con$County[con$County == &quot;ELGEYO MARAKWET&quot; ] &lt;- &quot;ELGEYO-MARAKWET&quot;</code></pre>
+<p>We can also compute anomalies for these climate metrics. The
+<em>Z-score</em> is a good measure to capture anomalies. Z-scores
+indicate the deviations of seasonal/annual metrics from its long-term
+annual mean. The unit is “standard deviations”. This a z-score of -1
+means that the value is 1 standard deviation below the (expected) mean
+value i.e.;</p>
+<pre class="r"><code>zscore &lt;- function(y){
+  (y - mean(y, na.rm=TRUE) ) / (sd(y, na.rm=TRUE))
+}</code></pre>
+<p>Compute the zScored metrics per year per Country</p>
+<pre class="r"><code>gpp &lt;- ungroup(mutate(group_by(gpp,County), zgpp=zscore(gpp)))
+tmp &lt;- ungroup(mutate(group_by(tmp,County), ztemp=zscore(temp)))
+prec &lt;- ungroup(mutate(group_by(prec,County), zprecip=zscore(precip)))
+con &lt;- ungroup(mutate(group_by(con,County), zFATALITIES=zscore(FATALITIES)))</code></pre>
+</div>
+<div id="visualize-trends" class="section level2">
+<h2>Visualize trends</h2>
+<div id="simple-plots" class="section level3">
+<h3>Simple plots</h3>
+<p>Make trend plots.</p>
+<pre class="r"><code>x &lt;- aggregate(FATALITIES~date, data=con, mean, na.rm=T)
+y &lt;- aggregate(temp~date, data=tmp, mean, na.rm=T)
+z &lt;- aggregate(precip~date, data=prec, mean, na.rm=T)
+k &lt;- aggregate(gpp~date, data=gpp, mean, na.rm=T)
+
+par(mfrow = c(2, 2), mar = c(4, 5, 1, 1)) #c(bottom, left, top, right)
+plot(FATALITIES~date, data=x, type=&quot;l&quot;, col=&quot;red&quot;, ylab=&quot;# Fatalities&quot;, xlab= &quot;Year&quot;, cex.axis =1.2, cex.lab = 1.2)
+plot(gpp~date, data=k, type=&quot;l&quot;, col=&quot;red&quot;, ylab=&quot;GPP&quot;, xlab= &quot;Year&quot;, cex.axis =1.2, cex.lab = 1.2)
+plot(precip~date, data=z, type=&quot;l&quot;, col=&quot;red&quot;, ylab=&quot;Precipitation&quot;, xlab= &quot;Year&quot;, cex.axis =1.2, cex.lab = 1.2)
+plot(temp~date, data=y, type=&quot;l&quot;, col=&quot;red&quot;, ylab=&quot;2m Air Tempetature&quot;, xlab= &quot;Year&quot;, cex.axis =1.2, cex.lab = 1.2)</code></pre>
+<p><img src="metrics_files/figure-html/tr1-1.png" width="672" /></p>
+</div>
+<div id="regression-plots" class="section level3">
+<h3>Regression plots</h3>
+<p>As we proceed let’s merge all the datasets to one
+<code>data.frame</code></p>
+<pre class="r"><code>df_list &lt;- list(con, tmp, gpp, prec)
+dff &lt;- Reduce(function(x, y) merge(x, y, by=c(&quot;County&quot;,&quot;date&quot;)), df_list)</code></pre>
+<p>Make regression plots to identify relationship between conflicts and
+various climate EO metrics.</p>
+<pre class="r"><code>library(ggplot2)
+library(gridExtra)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;gridExtra&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<pre class="r"><code>aa &lt;- melt(subset(dff, select=-c(temp, gpp, precip, FATALITIES)), variable.name = &quot;metric_name&quot;, value.name = &quot;metric&quot;, id.vars = c(&quot;County&quot;, &quot;date&quot;, &quot;zFATALITIES&quot;))
+
+ggplot(aa, aes(metric, zFATALITIES)) +
+  geom_point() +
+  geom_smooth(method=&quot;loess&quot;) +
+  facet_wrap(~ metric_name)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 6 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 6 rows containing missing values (geom_point).</code></pre>
+<p><img src="metrics_files/figure-html/tr2-1.png" width="672" /></p>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent"
+line-spacing="2">
+<div id="ref-Kenduiywo_ISPRS_2020" class="csl-entry">
+Kenduiywo, B. K., Ghosh, A., Hijmans, R., &amp; Ndungu, L. (2020). MAIZE
+YIELD ESTIMATION IN KENYA USING MODIS. <em>ISPRS Annals of the
+Photogrammetry, Remote Sensing and Spatial Information Sciences</em>,
+<em>V-3-2020</em>, 477–482. <a
+href="https://doi.org/10.5194/isprs-annals-V-3-2020-477-2020">https://doi.org/10.5194/isprs-annals-V-3-2020-477-2020</a>
+</div>
 </div>
 </div>
 

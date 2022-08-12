@@ -34,9 +34,9 @@ ref <- paste0(root, "ref/")
 ```
 
 
-### Get metrics
+### Spatial metrics
 
-Load Gross Primary Productivity (GPP) MODIS (2000--2022) and ERA5 (1997--2020) climate metrics computed in [Earth Engine]([here](https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf)) and convert to long format.
+Load Gross Primary Productivity (GPP) MODIS (2000--2022) and ERA5 (1997--2020) climate metrics computed in [Earth Engine]([here](https://code.earthengine.google.com/29f887f9a190abdb7aef6b8bab5b3ccf)) and convert to long format. These metrics have been spatially aggregated to county boundaries as depicted by Figure 4 in [@Kenduiywo_ISPRS_2020].
 
 ```{r modis, echo=FALSE, warning=FALSE, message=FALSE}
 wide2long <- function(df, variable){
@@ -96,5 +96,112 @@ knitr::kable(head(tmp, n=2))
 prec <- formatDate(prec, weather = T)
 knitr::kable(head(prec, n=2))
 ```
+
+
+## Spatial-temporal metrics
+
+Temporally aggregate the spatial metrics per year to obtain *spatial-temporal climate metrics*. Event of conflicts from violence against civilians will also be aggregated per year and county.
+
+```{r st1}
+gpp$date <- format(as.Date(gpp$date, format="%d/%m/%Y"),"%Y")
+gpp <- aggregate(.~County+date, data=gpp, mean, na.rm=T)
+tmp$date <- format(as.Date(tmp$date, format="%d/%m/%Y"),"%Y")
+tmp <- aggregate(.~County+date, data=tmp, mean, na.rm=T)
+prec$date <- format(as.Date(prec$date, format="%d/%m/%Y"),"%Y")
+prec <- aggregate(.~County+date, data=prec, mean, na.rm=T)
+
+con <- readRDS("civilianViolence.rds")
+con <- subset(con@data, select= c(ADMIN1, FATALITIES, YEAR))
+names(con)[1] <- "County"
+names(con)[3] <- "date"
+con <- aggregate(.~County+date, data=con, sum, na.rm=T)
+
+```
+
+
+Let's make some plots and evaluate trends. First merge each jmetric with conflict data. To do so check for county naming consistencies. 
+
+
+```{r st2}
+con$County <- toupper(con$County)
+gpp$County <- toupper(gpp$County)
+tmp$County <- toupper(tmp$County)
+prec$County <- toupper(prec$County)
+c <- sort(unique(con$County))
+c[!c %in% sort(unique(gpp$County))]
+c[!c %in% sort(unique(tmp$County))]
+c[!c %in% sort(unique(prec$County))]
+```
+
+Edit the inconsistencies on the identified counties.
+
+```{r st3}
+con$County[con$County == "MURANGA"] <- "MURANG'A"
+con$County[con$County == "ELGEYO MARAKWET" ] <- "ELGEYO-MARAKWET"
+```
+
+We can also compute anomalies for these climate metrics. The _Z-score_ is a good measure to capture anomalies. Z-scores indicate the deviations of seasonal/annual metrics from its long-term annual mean. The unit is “standard deviations”. This a z-score of -1 means that the value is 1 standard deviation below the (expected) mean value i.e.;
+
+```{r st4}
+zscore <- function(y){
+  (y - mean(y, na.rm=TRUE) ) / (sd(y, na.rm=TRUE))
+}
+
+```
+
+Compute the zScored metrics per year per Country
+
+```{r d7}
+gpp <- ungroup(mutate(group_by(gpp,County), zgpp=zscore(gpp)))
+tmp <- ungroup(mutate(group_by(tmp,County), ztemp=zscore(temp)))
+prec <- ungroup(mutate(group_by(prec,County), zprecip=zscore(precip)))
+con <- ungroup(mutate(group_by(con,County), zFATALITIES=zscore(FATALITIES)))
+```
+
+## Visualize trends
+
+### Simple plots
+
+Make trend plots.
+
+```{r tr1}
+x <- aggregate(FATALITIES~date, data=con, mean, na.rm=T)
+y <- aggregate(temp~date, data=tmp, mean, na.rm=T)
+z <- aggregate(precip~date, data=prec, mean, na.rm=T)
+k <- aggregate(gpp~date, data=gpp, mean, na.rm=T)
+
+par(mfrow = c(2, 2), mar = c(4, 5, 1, 1)) #c(bottom, left, top, right)
+plot(FATALITIES~date, data=x, type="l", col="red", ylab="# Fatalities", xlab= "Year", cex.axis =1.2, cex.lab = 1.2)
+plot(gpp~date, data=k, type="l", col="red", ylab="GPP", xlab= "Year", cex.axis =1.2, cex.lab = 1.2)
+plot(precip~date, data=z, type="l", col="red", ylab="Precipitation", xlab= "Year", cex.axis =1.2, cex.lab = 1.2)
+plot(temp~date, data=y, type="l", col="red", ylab="2m Air Tempetature", xlab= "Year", cex.axis =1.2, cex.lab = 1.2)
+
+```
+
+
+### Regression plots
+
+As we proceed let's merge all the datasets to one `data.frame`
+
+```{r merg1}
+df_list <- list(con, tmp, gpp, prec)
+dff <- Reduce(function(x, y) merge(x, y, by=c("County","date")), df_list)
+
+```
+
+Make regression plots to identify relationship between conflicts and various climate EO metrics.
+
+```{r tr2}
+library(ggplot2)
+library(gridExtra)
+aa <- melt(subset(dff, select=-c(temp, gpp, precip, FATALITIES)), variable.name = "metric_name", value.name = "metric", id.vars = c("County", "date", "zFATALITIES"))
+
+ggplot(aa, aes(metric, zFATALITIES)) +
+  geom_point() +
+  geom_smooth(method="loess") +
+  facet_wrap(~ metric_name)
+```
+
+## References
 
 
