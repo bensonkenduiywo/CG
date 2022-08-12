@@ -18,7 +18,8 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60))
 opts_knit$set(global.par = TRUE)
 ```
 
-## Climate metrics
+
+## Conflict and Climate
 
 Load necessary packages and define directories.
 
