@@ -200,7 +200,27 @@ ggplot(aa, aes(metric, zFATALITIES)) +
   geom_point() +
   geom_smooth(method="loess") +
   facet_wrap(~ metric_name)
+
+
+#Explore other plots with no anomalies
+p1 <- ggplot(dff, aes(gpp, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = "loess")
+
+p2 <- ggplot(dff, aes(temp, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = "loess")
+
+p3 <- ggplot(dff, aes(precip, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = "loess")
+grid.arrange(p1, p2, p3, ncol = 2)
+
 ```
+
+
+Seems like precipitation is a good indicator of conflicts. For instance, conflicts are high when precipitation is low..
+
 
 ## References
 

@@ -578,6 +578,25 @@ ggplot(aa, aes(metric, zFATALITIES)) +
 <pre><code>## Warning: Removed 6 rows containing non-finite values (stat_smooth).</code></pre>
 <pre><code>## Warning: Removed 6 rows containing missing values (geom_point).</code></pre>
 <p><img src="metrics_files/figure-html/tr2-1.png" width="672" /></p>
+<pre class="r"><code>#Explore other plots with no anomalies
+p1 &lt;- ggplot(dff, aes(gpp, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = &quot;loess&quot;)
+
+p2 &lt;- ggplot(dff, aes(temp, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = &quot;loess&quot;)
+
+p3 &lt;- ggplot(dff, aes(precip, FATALITIES)) +
+  geom_point() +
+  geom_smooth(method = &quot;loess&quot;)
+grid.arrange(p1, p2, p3, ncol = 2)</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;
+## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="metrics_files/figure-html/tr2-2.png" width="672" /></p>
+<p>Seems like precipitation is a good indicator of conflicts. For
+instance, conflicts are high when precipitation is low..</p>
 </div>
 </div>
 <div id="references" class="section level2 unnumbered">

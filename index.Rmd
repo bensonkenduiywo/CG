@@ -20,10 +20,16 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60))
 opts_knit$set(global.par = TRUE)
 ```
 
+## Background
+
+This tutorial seeks to quantify how climate can influence the likelihood and intensity of conflict via its impact on socio-economic vulnerabilities, such as food and nutrition insecurity, forced displacement and migration, inequality, etc. The Spatial Analysis is an important component of this approach providing answers to the following research questions:
+
+-	Where are the most vulnerable areas to climate induced insecurities and risks?  
+-	Who are vulnerable groups to climate and security risks that should be targeted? 
+
 ## Introduction
 
 This exercise explores the how of different climate influences the intensity different types of conflicts. Regional data from [ACLED](https://acleddata.com/curated-data-files/#aggregated) is adopted. ACLED is an event-based data project designed for disaggregated conflict analysis and crisis mapping.
-
 
 Prepare environment and Load the data
 
