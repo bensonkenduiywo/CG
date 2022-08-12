@@ -318,6 +318,9 @@ map2
 
 It can be noted that Turkana, Garissa, and Mandera the most vulnerable counties to civilian violence. This can be linked to adverse climate effects as depicted by low precipitation. The model confidence in this areas is also moderate based on Local R2.
 
+## References
+
+
 
 
 
