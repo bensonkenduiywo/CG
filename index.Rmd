@@ -83,6 +83,9 @@ map_a <- tm_shape(df1, name="Violence against civilians") +
   tm_format("World")
 map_a
 
+lf <- tmap_leaflet(map_a)
+mapshot(lf, file = "CivilianViolencemap.png")
+
 ```
 
 Summary of conflicts distribution:
@@ -101,6 +104,9 @@ map_b <- tm_shape(df1, name="Violence against civilians") +
   tm_bubbles(size="FATALITIES", col = "SUB_EVENT_TYPE") +
   tm_format("World")
 map_b
+lf <- tmap_leaflet(map_a)
+mapshot(lf, file = "CivilianViolencemap_b.png")
+
 #Save for later use
 saveRDS(df1, "civilianViolence.rds")
 ```

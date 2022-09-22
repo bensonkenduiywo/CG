@@ -304,14 +304,21 @@ Display fatalities and precip
 
 
 ```{r gwr7}
-map1=tm_shape(gwr.map) + tm_fill("FATALITIES")  + tm_layout(frame = FALSE, legend.text.size = 0.8, legend.title.size = 0.8)+
-  tm_text("County", size = 0.6, remove.overlap = T)+
+map1=tm_shape(gwr.map) + tm_fill("FATALITIES")  + tm_layout(frame = FALSE, legend.text.size = 1, legend.title.size = 1)+
+  tm_text("County", size = 0.9, remove.overlap = T)+
   tm_format("World")
-map2=tm_shape(gwr.map) + tm_fill("precip")  + tm_layout(frame = FALSE, legend.text.size = 0.8, legend.title.size = 0.8)+
-  tm_text("County", size = 0.6, remove.overlap = T)+
+map2=tm_shape(gwr.map) + tm_fill("precip")  + tm_layout(frame = FALSE, legend.text.size = 1, legend.title.size = 1)+
+  tm_text("County", size = 0.9, remove.overlap = T)+
   tm_format("World")
 map1
 map2
+
+
+lf <- tmap_leaflet(map1)
+mapshot(lf, file = "FatalitiesDistribution_ke.png")
+
+lf <- tmap_leaflet(map2)
+mapshot(lf, file = "PrecipDistribution_ke.png")
 
 ```
 
