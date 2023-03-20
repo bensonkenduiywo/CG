@@ -16,6 +16,8 @@ navbar:
           href: modis.html
         - text: "Conflict and climate"
           href: metrics.html
+        - text: "Climate Secuirty"
+          href: CS.html
   right:
     - icon: fa-envelope fa-lg
       href: mailto:bensonkemboi@gmail.com
